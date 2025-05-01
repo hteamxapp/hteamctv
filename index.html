@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Web Mua Hàng</title>
+</head>
+<body>
+  <h2>Mua sản phẩm</h2>
+  <label>User ID: <input id="userId" /></label><br/>
+  <label>Product ID: <input id="productId" /></label><br/>
+  <button onclick="buy()">Mua</button>
+  <p id="result"></p>
+
+  <script>
+    const API_URL = 'https://script.google.com/macros/s/YOUR_DEPLOYED_URL/exec';
+
+    function buy() {
+      const userId = document.getElementById("userId").value;
+      const productId = document.getElementById("productId").value;
+
+      fetch(`${API_URL}?action=buyProduct&userId=${userId}&productId=${productId}`)
+        .then(res => res.text())
+        .then(text => document.getElementById("result").innerText = text);
+    }
+  </script>
+</body>
+</html>
