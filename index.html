@@ -1,25 +1,127 @@
 <!DOCTYPE html>
-<html>
+<html lang="vi">
 <head>
-  <title>Web Mua Hàng</title>
+  <meta charset="UTF-8" />
+  <title>HTEAM CTV</title>
+  <style>
+    body {
+      background: black;
+      color: white;
+      font-family: sans-serif;
+      text-align: center;
+    }
+    input, textarea, button {
+      padding: 10px;
+      font-size: 16px;
+      width: 80%;
+      margin: 5px 0;
+      border-radius: 5px;
+    }
+    table {
+      width: 90%;
+      margin: auto;
+      border: 1px solid white;
+      margin-top: 10px;
+    }
+    th, td {
+      border: 1px solid white;
+      padding: 5px;
+    }
+    #withdrawForm {
+      display: none;
+    }
+    .blue-btn {
+      background: #00aaff;
+      color: white;
+      font-weight: bold;
+      width: 90%;
+    }
+  </style>
 </head>
 <body>
-  <h2>Mua sản phẩm</h2>
-  <label>User ID: <input id="userId" /></label><br/>
-  <label>Product ID: <input id="productId" /></label><br/>
-  <button onclick="buy()">Mua</button>
-  <p id="result"></p>
+  <div id="mainView">
+    <h1>HTEAM CTV</h1>
+    <p>App Thống Kê Thu Nhập<br>Của CTV HTeam<br>Version:1.1</p>
+    <input id="username" placeholder="Tên người dùng"><br>
+    <button onclick="loadIncome()">TIẾP TỤC</button>
+
+    <table id="incomeTable" style="display:none;">
+      <thead>
+        <tr><th>Ngày tháng năm</th><th>Thu nhập</th><th>Note</th></tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+
+    <div id="totalView" style="display:none; text-align:left; padding-left: 5%;">
+      <p>Tổng thu nhập: <span id="totalIncome"></span></p>
+      <p>Số dư: <span id="balance"></span></p>
+    </div>
+
+    <button class="blue-btn" onclick="showWithdraw()">Gửi yêu cầu rút tiền</button>
+  </div>
+
+  <div id="withdrawForm">
+    <h2>RÚT TIỀN</h2>
+    <input id="w_name" placeholder="Tên người dùng"><br>
+    <input id="w_bank" placeholder="Ngân hàng"><br>
+    <input id="w_account" placeholder="Số tài khoản"><br>
+    <input id="w_amount" placeholder="Số tiền"><br>
+    <textarea id="w_note" placeholder="Nội dung rút"></textarea><br>
+    <button class="blue-btn" onclick="submitWithdraw()">GỬI ĐI</button>
+  </div>
 
   <script>
-    const API_URL = 'https://script.google.com/macros/s/YOUR_DEPLOYED_URL/exec';
+    const API = "https://sheetdb.io/api/v1/ttokf6668h433";
 
-    function buy() {
-      const userId = document.getElementById("userId").value;
-      const productId = document.getElementById("productId").value;
+    function loadIncome() {
+      const username = document.getElementById("username").value.trim();
+      if (!username) return alert("Nhập tên người dùng");
 
-      fetch(`${API_URL}?action=buyProduct&userId=${userId}&productId=${productId}`)
-        .then(res => res.text())
-        .then(text => document.getElementById("result").innerText = text);
+      fetch(API)
+        .then(res => res.json())
+        .then(data => {
+          const filtered = data.filter(row => row.name === username);
+          const tableBody = document.getElementById("tableBody");
+          let total = 0;
+
+          tableBody.innerHTML = "";
+          filtered.forEach(row => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `<td>${row.date}</td><td>${row.amount}</td><td>${row.note}</td>`;
+            tableBody.appendChild(tr);
+            total += parseFloat(row.amount || 0);
+          });
+
+          document.getElementById("incomeTable").style.display = "table";
+          document.getElementById("totalView").style.display = "block";
+          document.getElementById("totalIncome").textContent = total.toLocaleString();
+          document.getElementById("balance").textContent = total.toLocaleString();
+        });
+    }
+
+    function showWithdraw() {
+      document.getElementById("mainView").style.display = "none";
+      document.getElementById("withdrawForm").style.display = "block";
+    }
+
+    function submitWithdraw() {
+      const data = {
+        name: document.getElementById("w_name").value,
+        bank: document.getElementById("w_bank").value,
+        account: document.getElementById("w_account").value,
+        amount: document.getElementById("w_amount").value,
+        note: document.getElementById("w_note").value,
+        type: "withdraw"
+      };
+
+      fetch(API, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify([data])
+      })
+      .then(res => res.json())
+      .then(() => alert("Yêu cầu đã được gửi!"))
+      .catch(err => alert("Lỗi: " + err));
     }
   </script>
 </body>
