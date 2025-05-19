@@ -89,7 +89,7 @@
       document.getElementById("screen1").classList.add("hidden");
       document.getElementById("screen2").classList.remove("hidden");
 
-      fetch(API)
+      fetch(API + "?sheet=ThuNhap")
         .then(res => res.json())
         .then(data => {
           const filtered = data.filter(row => row.username === username);
@@ -98,12 +98,16 @@
           let lastBalance = 0;
 
           tableBody.innerHTML = "";
-          filtered.forEach(row => {
+          filtered.forEach((row, index) => {
             const tr = document.createElement("tr");
             tr.innerHTML = `<td>${row.date || ""}</td><td>${row.amount || 0}</td><td>${row.note || ""}</td>`;
             tableBody.appendChild(tr);
+
             total += parseFloat(row.amount || 0);
-            lastBalance = row.balance || total;
+
+            if (index === filtered.length - 1 && row.balance) {
+              lastBalance = parseFloat(row.balance);
+            }
           });
 
           document.getElementById("total").textContent = total.toLocaleString() + " đ";
@@ -127,7 +131,7 @@
         Content: document.getElementById("w_note").value
       };
 
-      fetch(API, {
+      fetch(API + "?sheet=YeuCauRut", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify([data])
@@ -135,7 +139,7 @@
       .then(res => res.json())
       .then(() => {
         alert("Đã gửi yêu cầu rút tiền!");
-        location.reload(); // Quay lại từ đầu
+        location.reload();
       })
       .catch(err => alert("Gửi thất bại: " + err));
     }
