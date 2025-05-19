@@ -98,14 +98,15 @@
           let lastBalance = 0;
 
           tableBody.innerHTML = "";
-          filtered.forEach((row, index) => {
+          filtered.forEach((row) => {
             const tr = document.createElement("tr");
             tr.innerHTML = `<td>${row.date || ""}</td><td>${row.amount || 0}</td><td>${row.note || ""}</td>`;
             tableBody.appendChild(tr);
 
             total += parseFloat(row.amount || 0);
 
-            if (index === filtered.length - 1 && row.balance) {
+            // Lấy balance gần nhất có giá trị
+            if (row.balance && !isNaN(parseFloat(row.balance))) {
               lastBalance = parseFloat(row.balance);
             }
           });
