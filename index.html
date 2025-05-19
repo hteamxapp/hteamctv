@@ -68,146 +68,189 @@
 </head>
 <body>
 
-  <!-- MÀN 1 -->
-  <div id="screen1">
-    <h1 class="title">HTeam MMO</h1>
-    <input id="usernameInput" placeholder="Tên người dùng">
-    <button class="blue-btn" onclick="continueToStats()">TIẾP TỤC</button>
+<!-- MÀN 1 -->
+<div id="screen1">
+  <h1 class="title">HTeam MMO</h1>
+  <input id="usernameInput" placeholder="Tên người dùng">
+  <button class="blue-btn" onclick="continueToStats()">TIẾP TỤC</button>
 
-    <div class="description">
-      <b>Đăng kí MMO với HR</b>
-      » Telesale: Gọi điện xác nhận chốt đơn cho khách<br>
-      » Saler: Lên đơn cho khách, kiếm khách và giới thiệu sp<br>
-      » CTV HTeam: Kiếm khách và giới thiệu khách qua sử dụng buff tương tác cùng dịch vụ khác tại HTeam<br>
-      » Tool Auto: Treo máy kiếm xu<br>
-      ...
-    </div>
-
-    <a href="https://m.me/viethung2002tienhai" target="_blank">
-      <button class="messenger-btn">ĐĂNG KÝ</button>
-    </a>
-
-    <p style="margin-top: 30px; font-size: 15px; color: #ccc;">
-      Giới hạn truy cập user 500/tháng<br>
-      Chúng tôi sẽ sớm nâng cấp hệ thống<br>
-      username thay thế cả pass nên không được để lộ tránh bị mất tiền
-    </p>
+  <div class="description">
+    <b>Đăng kí MMO với HR</b>
+    » Telesale: Gọi điện xác nhận chốt đơn cho khách<br>
+    » Saler: Lên đơn cho khách, kiếm khách và giới thiệu sp<br>
+    » CTV HTeam: Kiếm khách và giới thiệu khách qua sử dụng buff tương tác cùng dịch vụ khác tại HTeam<br>
+    » Tool Auto: Treo máy kiếm xu<br>
+    ...
   </div>
 
-  <!-- MÀN 2 -->
-  <div id="screen2" class="hidden">
-    <h2>Thu nhập của bạn</h2>
+  <a href="https://m.me/viethung2002tienhai" target="_blank">
+    <button class="messenger-btn">ĐĂNG KÝ</button>
+  </a>
+
+  <p style="margin-top: 30px; font-size: 15px; color: #ccc;">
+    Giới hạn truy cập user 500/tháng<br>
+    Chúng tôi sẽ sớm nâng cấp hệ thống<br>
+    username thay thế cả pass nên không được để lộ tránh bị mất tiền
+  </p>
+</div>
+
+<!-- MÀN 2 -->
+<div id="screen2" class="hidden">
+  <h2>Thu nhập của bạn</h2>
+  <table>
+    <thead><tr><th>Ngày</th><th>Thu nhập</th><th>Ghi chú</th></tr></thead>
+    <tbody id="tableBody"></tbody>
+  </table>
+
+  <div style="text-align:left; margin-top:20px;">
+    <p><strong>Tổng thu nhập:</strong> <span id="total"></span></p>
+    <p><strong>Số dư:</strong> <span id="balance"></span></p>
+    <p><strong>Họ tên:</strong> <span id="realName"></span></p>
+  </div>
+  <button class="blue-btn" onclick="showWithdraw()">Gửi yêu cầu rút tiền</button>
+</div>
+
+<!-- MÀN 3 -->
+<div id="screen3" class="hidden">
+  <h2>RÚT TIỀN</h2>
+  <input id="w_bank" placeholder="Ngân hàng"><br>
+  <input id="w_account" placeholder="Số tài khoản"><br>
+  <input id="w_amount" placeholder="Số tiền"><br>
+  <textarea id="w_note" placeholder="Nội dung rút"></textarea><br>
+
+  <button class="blue-btn" onclick="submitWithdraw()">GỬI ĐI</button>
+  <button class="blue-btn" style="margin-top: 10px;" onclick="backToStats()">↩️ BACK</button>
+
+  <div style="margin-top: 80px; padding: 0 5%; color: limegreen; font-size: 14px; text-align: left;">
+    <strong>Lưu ý:</strong><br>
+    1. Nên rút tài khoản chính chủ<br>
+    2. Rút tối thiểu 1000₫, tối đa 2 lần rút/ngày<br>
+    3. Tránh để lộ username vì nó thay thế mật khẩu<br>
+    4. Hệ thống sẽ tự duyệt và chuyển tiền trong khoảng 20h - 0h, vì vậy nên đặt lệnh trước 20h<br>
+    5. Nếu đã đặt lệnh trước 20h nhưng chưa nhận được tiền, vui lòng liên hệ trực tiếp với admin ở phần ĐĂNG KÝ màn đầu hoặc ID Facebook: <b>viethung2002tienhai</b>
+  </div>
+
+  <div style="margin-top: 40px;">
+    <h3>Lịch sử rút tiền</h3>
     <table>
-      <thead><tr><th>Ngày</th><th>Thu nhập</th><th>Ghi chú</th></tr></thead>
-      <tbody id="tableBody"></tbody>
+      <thead>
+        <tr>
+          <th>Thời gian</th>
+          <th>Ngân hàng</th>
+          <th>Số tiền</th>
+          <th>Nội dung</th>
+          <th>Trạng thái</th>
+        </tr>
+      </thead>
+      <tbody id="withdrawHistory"></tbody>
     </table>
-
-    <div style="text-align:left; margin-top:20px;">
-      <p><strong>Tổng thu nhập:</strong> <span id="total"></span></p>
-      <p><strong>Số dư:</strong> <span id="balance"></span></p>
-      <p><strong>Họ tên:</strong> <span id="realName"></span></p>
-    </div>
-    <button class="blue-btn" onclick="showWithdraw()">Gửi yêu cầu rút tiền</button>
   </div>
+</div>
 
-  <!-- MÀN 3 -->
-  <div id="screen3" class="hidden">
-    <h2>RÚT TIỀN</h2>
-    <input id="w_bank" placeholder="Ngân hàng"><br>
-    <input id="w_account" placeholder="Số tài khoản"><br>
-    <input id="w_amount" placeholder="Số tiền"><br>
-    <textarea id="w_note" placeholder="Nội dung rút"></textarea><br>
-    <button class="blue-btn" onclick="submitWithdraw()">GỬI ĐI</button>
+<script>
+  const API = "https://sheetdb.io/api/v1/ttokf6668h433";
+  let usernameGlobal = "";
 
-    <!-- Lưu ý -->
-    <div style="margin-top: 80px; padding: 0 5%; color: limegreen; font-size: 14px; text-align: left;">
-      <strong>Lưu ý:</strong><br>
-      1. Nên rút tài khoản chính chủ<br>
-      2. Rút tối thiểu 1000₫, tối đa 2 lần rút/ngày<br>
-      3. Tránh để lộ username vì nó thay thế mật khẩu<br>
-      4. Hệ thống sẽ tự duyệt và chuyển tiền trong khoảng 20h - 0h, vì vậy nên đặt lệnh trước 20h<br>
-      5. Nếu đã đặt lệnh trước 20h nhưng chưa nhận được tiền, vui lòng liên hệ trực tiếp với admin ở phần ĐĂNG KÝ màn đầu hoặc ID Facebook: <b>viethung2002tienhai</b>
-    </div>
-  </div>
+  function continueToStats() {
+    const username = document.getElementById("usernameInput").value.trim();
+    if (!username) return alert("Vui lòng nhập tên người dùng");
 
-  <script>
-    const API = "https://sheetdb.io/api/v1/ttokf6668h433";
-    let usernameGlobal = "";
+    fetch(API + "?sheet=ThuNhap")
+      .then(res => res.json())
+      .then(data => {
+        const filtered = data.filter(row => row.username === username);
 
-    function continueToStats() {
-      const username = document.getElementById("usernameInput").value.trim();
-      if (!username) return alert("Vui lòng nhập tên người dùng");
+        if (filtered.length === 0) {
+          alert("Tên người dùng không chính xác hoặc bạn chưa đăng ký HTeam MMO, vui lòng thử lại");
+          return;
+        }
 
-      fetch(API + "?sheet=ThuNhap")
-        .then(res => res.json())
-        .then(data => {
-          const filtered = data.filter(row => row.username === username);
+        usernameGlobal = username;
+        document.getElementById("screen1").classList.add("hidden");
+        document.getElementById("screen2").classList.remove("hidden");
 
-          if (filtered.length === 0) {
-            alert("Tên người dùng không chính xác hoặc bạn chưa đăng ký HTeam MMO, vui lòng thử lại");
-            return;
+        const tableBody = document.getElementById("tableBody");
+        let total = 0;
+        let lastBalance = 0;
+        let realName = "";
+
+        tableBody.innerHTML = "";
+        filtered.forEach((row) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `<td>${row.date || ""}</td><td>${row.amount || 0}</td><td>${row.note || ""}</td>`;
+          tableBody.appendChild(tr);
+
+          total += parseFloat(row.amount || 0);
+
+          if (row.balance && !isNaN(parseFloat(row.balance))) {
+            lastBalance = parseFloat(row.balance);
           }
 
-          usernameGlobal = username;
-          document.getElementById("screen1").classList.add("hidden");
-          document.getElementById("screen2").classList.remove("hidden");
+          if (row.name) {
+            realName = row.name;
+          }
+        });
 
-          const tableBody = document.getElementById("tableBody");
-          let total = 0;
-          let lastBalance = 0;
-          let realName = "";
-
-          tableBody.innerHTML = "";
-          filtered.forEach((row) => {
-            const tr = document.createElement("tr");
-            tr.innerHTML = `<td>${row.date || ""}</td><td>${row.amount || 0}</td><td>${row.note || ""}</td>`;
-            tableBody.appendChild(tr);
-
-            total += parseFloat(row.amount || 0);
-
-            if (row.balance && !isNaN(parseFloat(row.balance))) {
-              lastBalance = parseFloat(row.balance);
-            }
-
-            if (row.name) {
-              realName = row.name;
-            }
-          });
-
-          document.getElementById("total").textContent = total.toLocaleString() + " đ";
-          document.getElementById("balance").textContent = lastBalance.toLocaleString() + " đ";
-          document.getElementById("realName").textContent = realName;
-        })
-        .catch(err => alert("Lỗi khi lấy dữ liệu: " + err));
-    }
-
-    function showWithdraw() {
-      document.getElementById("screen2").classList.add("hidden");
-      document.getElementById("screen3").classList.remove("hidden");
-    }
-
-    function submitWithdraw() {
-      const data = {
-        time: new Date().toLocaleString(),
-        username: usernameGlobal,
-        bank: document.getElementById("w_bank").value,
-        ["account number"]: document.getElementById("w_account").value,
-        amount: document.getElementById("w_amount").value,
-        Content: document.getElementById("w_note").value
-      };
-
-      fetch(API + "?sheet=YeuCauRut", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify([data])
+        document.getElementById("total").textContent = total.toLocaleString() + " đ";
+        document.getElementById("balance").textContent = lastBalance.toLocaleString() + " đ";
+        document.getElementById("realName").textContent = realName;
       })
+      .catch(err => alert("Lỗi khi lấy dữ liệu: " + err));
+  }
+
+  function showWithdraw() {
+    document.getElementById("screen2").classList.add("hidden");
+    document.getElementById("screen3").classList.remove("hidden");
+
+    // Lịch sử rút tiền
+    fetch(API + "?sheet=YeuCauRut")
       .then(res => res.json())
-      .then(() => {
-        alert("Đã gửi yêu cầu rút tiền!");
-        location.reload();
-      })
-      .catch(err => alert("Gửi thất bại: " + err));
-    }
-  </script>
+      .then(data => {
+        const filtered = data.filter(row => row.username === usernameGlobal);
+        const table = document.getElementById("withdrawHistory");
+        table.innerHTML = "";
+
+        filtered.reverse().forEach(row => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${row.time || ""}</td>
+            <td>${row.bank || ""}</td>
+            <td>${row.amount || ""}</td>
+            <td>${row.Content || ""}</td>
+            <td>${row.status || "Đang xử lý"}</td>`;
+          table.appendChild(tr);
+        });
+      });
+  }
+
+  function submitWithdraw() {
+    const data = {
+      time: new Date().toLocaleString(),
+      username: usernameGlobal,
+      bank: document.getElementById("w_bank").value,
+      ["account number"]: document.getElementById("w_account").value,
+      amount: document.getElementById("w_amount").value,
+      Content: document.getElementById("w_note").value
+    };
+
+    fetch(API + "?sheet=YeuCauRut", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify([data])
+    })
+    .then(res => res.json())
+    .then(() => {
+      alert("Đã gửi yêu cầu rút tiền!");
+      location.reload();
+    })
+    .catch(err => alert("Gửi thất bại: " + err));
+  }
+
+  function backToStats() {
+    document.getElementById("screen3").classList.add("hidden");
+    document.getElementById("screen2").classList.remove("hidden");
+  }
+</script>
+
 </body>
 </html>
