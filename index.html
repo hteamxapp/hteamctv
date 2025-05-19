@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>HTeam CTV</title>
+  <title>HTeam MMO</title>
   <style>
     body {
       background: black;
@@ -35,11 +35,34 @@
       color: yellow;
       font-weight: bold;
     }
+    .messenger-btn {
+      background: #0084ff;
+      color: white;
+      font-weight: bold;
+      border: none;
+      font-size: 18px;
+      padding: 14px;
+      margin-top: 12px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
     .hidden { display: none; }
     h1.title {
       font-size: 32px;
       color: #fff;
       text-shadow: 2px 2px 0 red, -2px -2px 0 cyan;
+    }
+    .description {
+      text-align: left;
+      margin-top: 20px;
+      margin-left: 5%;
+      margin-right: 5%;
+      font-size: 15px;
+    }
+    .description b {
+      font-size: 18px;
+      display: block;
+      margin-bottom: 8px;
     }
   </style>
 </head>
@@ -47,9 +70,26 @@
 
   <!-- MÀN 1: TÊN NGƯỜI DÙNG -->
   <div id="screen1">
-    <h1 class="title">HTeam CTV</h1>
+    <h1 class="title">HTeam MMO</h1>
     <input id="usernameInput" placeholder="Tên người dùng">
     <button class="blue-btn" onclick="continueToStats()">TIẾP TỤC</button>
+
+    <div class="description">
+      <b>Đăng kí MMO với HR</b>
+      » Telesale: Gọi điện xác nhận chốt đơn cho khách<br>
+      » Saler: Lên đơn cho khách, kiếm khách và giới thiệu sp<br>
+      » CTV HTeam: Kiếm khách và giới thiệu khách qua sử dụng buff tương tác cùng dịch vụ khác tại HTeam<br>
+      » Tool Auto: Treo máy kiếm xu<br>
+      ...
+    </div>
+
+    <a href="https://m.me/viethung2002tienhai" target="_blank">
+      <button class="messenger-btn">ĐĂNG KÝ</button>
+    </a>
+
+    <p style="margin-top: 30px; font-size: 15px; color: #ccc;">
+      Giới hạn truy cập user 500/tháng
+    </p>
   </div>
 
   <!-- MÀN 2: THU NHẬP -->
@@ -85,14 +125,20 @@
       const username = document.getElementById("usernameInput").value.trim();
       if (!username) return alert("Vui lòng nhập tên người dùng");
 
-      usernameGlobal = username;
-      document.getElementById("screen1").classList.add("hidden");
-      document.getElementById("screen2").classList.remove("hidden");
-
       fetch(API + "?sheet=ThuNhap")
         .then(res => res.json())
         .then(data => {
           const filtered = data.filter(row => row.username === username);
+
+          if (filtered.length === 0) {
+            alert("Tên người dùng không chính xác hoặc bạn chưa đăng ký HTeam MMO, vui lòng thử lại");
+            return;
+          }
+
+          usernameGlobal = username;
+          document.getElementById("screen1").classList.add("hidden");
+          document.getElementById("screen2").classList.remove("hidden");
+
           const tableBody = document.getElementById("tableBody");
           let total = 0;
           let lastBalance = 0;
@@ -105,7 +151,6 @@
 
             total += parseFloat(row.amount || 0);
 
-            // Lấy balance gần nhất có giá trị
             if (row.balance && !isNaN(parseFloat(row.balance))) {
               lastBalance = parseFloat(row.balance);
             }
