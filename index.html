@@ -47,7 +47,7 @@
 
     <table id="incomeTable" style="display:none;">
       <thead>
-        <tr><th>Ngày tháng năm</th><th>Thu nhập</th><th>Note</th></tr>
+        <tr><th>Ngày tháng năm</th><th>Thu nhập</th><th>Ghi chú</th></tr>
       </thead>
       <tbody id="tableBody"></tbody>
     </table>
@@ -80,14 +80,14 @@
       fetch(API)
         .then(res => res.json())
         .then(data => {
-          const filtered = data.filter(row => row.name === username);
+          const filtered = data.filter(row => row.username === username);
           const tableBody = document.getElementById("tableBody");
           let total = 0;
 
           tableBody.innerHTML = "";
           filtered.forEach(row => {
             const tr = document.createElement("tr");
-            tr.innerHTML = `<td>${row.date}</td><td>${row.amount}</td><td>${row.note}</td>`;
+            tr.innerHTML = `<td>${row.time || ""}</td><td>${row.amount || ""}</td><td>${row.Content || ""}</td>`;
             tableBody.appendChild(tr);
             total += parseFloat(row.amount || 0);
           });
@@ -106,12 +106,12 @@
 
     function submitWithdraw() {
       const data = {
-        name: document.getElementById("w_name").value,
+        time: new Date().toLocaleString(),
+        username: document.getElementById("w_name").value,
         bank: document.getElementById("w_bank").value,
-        account: document.getElementById("w_account").value,
+        ["account number"]: document.getElementById("w_account").value,
         amount: document.getElementById("w_amount").value,
-        note: document.getElementById("w_note").value,
-        type: "withdraw"
+        Content: document.getElementById("w_note").value
       };
 
       fetch(API, {
