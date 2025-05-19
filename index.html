@@ -2,67 +2,74 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
-  <title>HTEAM CTV</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>HTeam CTV</title>
   <style>
     body {
       background: black;
       color: white;
       font-family: sans-serif;
       text-align: center;
+      margin: 0;
+      padding: 20px;
     }
     input, textarea, button {
-      padding: 10px;
+      padding: 12px;
       font-size: 16px;
-      width: 80%;
-      margin: 5px 0;
-      border-radius: 5px;
+      width: 90%;
+      margin: 8px 0;
+      border-radius: 8px;
     }
     table {
-      width: 90%;
-      margin: auto;
-      border: 1px solid white;
-      margin-top: 10px;
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
     }
     th, td {
       border: 1px solid white;
-      padding: 5px;
-    }
-    #withdrawForm {
-      display: none;
+      padding: 8px;
+      font-size: 14px;
     }
     .blue-btn {
-      background: #00aaff;
-      color: white;
+      background: #0055ff;
+      color: yellow;
       font-weight: bold;
-      width: 90%;
+    }
+    .hidden { display: none; }
+    h1.title {
+      font-size: 32px;
+      color: #fff;
+      text-shadow: 2px 2px 0 red, -2px -2px 0 cyan;
     }
   </style>
 </head>
 <body>
-  <div id="mainView">
-    <h1>HTEAM CTV</h1>
-    <p>App Thống Kê Thu Nhập<br>Của CTV HTeam<br>Version:1.1</p>
-    <input id="username" placeholder="Tên người dùng"><br>
-    <button onclick="loadIncome()">TIẾP TỤC</button>
 
-    <table id="incomeTable" style="display:none;">
-      <thead>
-        <tr><th>Ngày tháng năm</th><th>Thu nhập</th><th>Ghi chú</th></tr>
-      </thead>
+  <!-- MÀN 1: TÊN NGƯỜI DÙNG -->
+  <div id="screen1">
+    <h1 class="title">HTeam CTV</h1>
+    <input id="usernameInput" placeholder="Tên người dùng">
+    <button class="blue-btn" onclick="continueToStats()">TIẾP TỤC</button>
+  </div>
+
+  <!-- MÀN 2: THU NHẬP -->
+  <div id="screen2" class="hidden">
+    <h2>Thu nhập của bạn</h2>
+    <table>
+      <thead><tr><th>Ngày</th><th>Thu nhập</th><th>Ghi chú</th></tr></thead>
       <tbody id="tableBody"></tbody>
     </table>
 
-    <div id="totalView" style="display:none; text-align:left; padding-left: 5%;">
-      <p>Tổng thu nhập: <span id="totalIncome"></span></p>
-      <p>Số dư: <span id="balance"></span></p>
+    <div style="text-align:left; margin-top:20px;">
+      <p><strong>Tổng thu nhập:</strong> <span id="total"></span></p>
+      <p><strong>Số dư:</strong> <span id="balance"></span></p>
     </div>
-
     <button class="blue-btn" onclick="showWithdraw()">Gửi yêu cầu rút tiền</button>
   </div>
 
-  <div id="withdrawForm">
+  <!-- MÀN 3: RÚT TIỀN -->
+  <div id="screen3" class="hidden">
     <h2>RÚT TIỀN</h2>
-    <input id="w_name" placeholder="Tên người dùng"><br>
     <input id="w_bank" placeholder="Ngân hàng"><br>
     <input id="w_account" placeholder="Số tài khoản"><br>
     <input id="w_amount" placeholder="Số tiền"><br>
@@ -72,10 +79,15 @@
 
   <script>
     const API = "https://sheetdb.io/api/v1/ttokf6668h433";
+    let usernameGlobal = "";
 
-    function loadIncome() {
-      const username = document.getElementById("username").value.trim();
-      if (!username) return alert("Nhập tên người dùng");
+    function continueToStats() {
+      const username = document.getElementById("usernameInput").value.trim();
+      if (!username) return alert("Vui lòng nhập tên người dùng");
+
+      usernameGlobal = username;
+      document.getElementById("screen1").classList.add("hidden");
+      document.getElementById("screen2").classList.remove("hidden");
 
       fetch(API)
         .then(res => res.json())
@@ -83,31 +95,32 @@
           const filtered = data.filter(row => row.username === username);
           const tableBody = document.getElementById("tableBody");
           let total = 0;
+          let lastBalance = 0;
 
           tableBody.innerHTML = "";
           filtered.forEach(row => {
             const tr = document.createElement("tr");
-            tr.innerHTML = `<td>${row.time || ""}</td><td>${row.amount || ""}</td><td>${row.Content || ""}</td>`;
+            tr.innerHTML = `<td>${row.date || ""}</td><td>${row.amount || 0}</td><td>${row.note || ""}</td>`;
             tableBody.appendChild(tr);
             total += parseFloat(row.amount || 0);
+            lastBalance = row.balance || total;
           });
 
-          document.getElementById("incomeTable").style.display = "table";
-          document.getElementById("totalView").style.display = "block";
-          document.getElementById("totalIncome").textContent = total.toLocaleString();
-          document.getElementById("balance").textContent = total.toLocaleString();
-        });
+          document.getElementById("total").textContent = total.toLocaleString() + " đ";
+          document.getElementById("balance").textContent = lastBalance.toLocaleString() + " đ";
+        })
+        .catch(err => alert("Lỗi khi lấy dữ liệu: " + err));
     }
 
     function showWithdraw() {
-      document.getElementById("mainView").style.display = "none";
-      document.getElementById("withdrawForm").style.display = "block";
+      document.getElementById("screen2").classList.add("hidden");
+      document.getElementById("screen3").classList.remove("hidden");
     }
 
     function submitWithdraw() {
       const data = {
         time: new Date().toLocaleString(),
-        username: document.getElementById("w_name").value,
+        username: usernameGlobal,
         bank: document.getElementById("w_bank").value,
         ["account number"]: document.getElementById("w_account").value,
         amount: document.getElementById("w_amount").value,
@@ -120,8 +133,11 @@
         body: JSON.stringify([data])
       })
       .then(res => res.json())
-      .then(() => alert("Yêu cầu đã được gửi!"))
-      .catch(err => alert("Lỗi: " + err));
+      .then(() => {
+        alert("Đã gửi yêu cầu rút tiền!");
+        location.reload(); // Quay lại từ đầu
+      })
+      .catch(err => alert("Gửi thất bại: " + err));
     }
   </script>
 </body>
