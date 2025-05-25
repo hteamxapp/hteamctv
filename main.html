@@ -11,14 +11,59 @@
       font-family: sans-serif;
       text-align: center;
       margin: 0;
-      padding: 20px;
+      padding: 0;
     }
-    input, textarea, button {
+    .title {
+      font-size: 40px;
+      margin: 30px 0 20px;
+      color: transparent;
+      background: linear-gradient(to right, #ffcc00, #ff3300);
+      -webkit-background-clip: text;
+      text-shadow: 2px 2px 4px red;
+      font-family: 'Comic Sans MS', cursive;
+    }
+
+    /* Banner slider */
+    .slider-container {
+      width: 90%;
+      max-width: 500px;
+      height: 200px;
+      margin: 0 auto;
+      overflow: hidden;
+      position: relative;
+      border: 2px solid white;
+    }
+
+    .slider-track {
+      display: flex;
+      width: 300%;
+      animation: slide 12s infinite;
+    }
+
+    .slider-track img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+
+    @keyframes slide {
+      0%   { transform: translateX(0%); }
+      33%  { transform: translateX(-100%); }
+      66%  { transform: translateX(-200%); }
+      100% { transform: translateX(0%); }
+    }
+
+    input, button, textarea {
       padding: 12px;
       font-size: 16px;
-      width: 90%;
-      margin: 8px 0;
+      width: 80%;
+      margin: 10px auto;
       border-radius: 8px;
+      display: block;
+    }
+    button {
+      cursor: pointer;
     }
     table {
       width: 100%;
@@ -30,227 +75,313 @@
       padding: 8px;
       font-size: 14px;
     }
-    .blue-btn {
-      background: #0055ff;
-      color: yellow;
-      font-weight: bold;
+    .footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background: #000;
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
     }
-    .messenger-btn {
-      background: #0084ff;
-      color: white;
-      font-weight: bold;
+    .footer button {
+      background: none;
       border: none;
-      font-size: 18px;
-      padding: 14px;
-      margin-top: 12px;
-      border-radius: 8px;
-      cursor: pointer;
+      color: white;
+      font-size: 24px;
     }
     .hidden { display: none; }
-    h1.title {
-      font-size: 32px;
-      color: #fff;
-      text-shadow: 2px 2px 0 red, -2px -2px 0 cyan;
-    }
-    .description {
-      text-align: left;
-      margin-top: 20px;
-      margin-left: 5%;
-      margin-right: 5%;
-      font-size: 15px;
-    }
-    .description b {
-      font-size: 18px;
-      display: block;
-      margin-bottom: 8px;
-    }
   </style>
 </head>
 <body>
-
-<!-- MÀN 1 -->
-<div id="screen1">
-  <h1 class="title">HTeam MMO</h1>
-  <input id="usernameInput" placeholder="Tên người dùng">
-  <button class="blue-btn" onclick="continueToStats()">TIẾP TỤC</button>
-
-  <div class="description">
-    <b>Đăng kí MMO với HR</b>
-    » Telesale: Gọi điện xác nhận chốt đơn cho khách<br>
-    » Saler: Lên đơn cho khách, kiếm khách và giới thiệu sp<br>
-    » CTV HTeam: Kiếm khách và giới thiệu khách qua sử dụng buff tương tác cùng dịch vụ khác tại HTeam<br>
-    » Tool Auto: Treo máy kiếm xu<br>
-    ...
-  </div>
-
-  <a href="https://m.me/viethung2002tienhai" target="_blank">
-    <button class="messenger-btn">ĐĂNG KÝ</button>
-  </a>
-
-  <p style="margin-top: 30px; font-size: 15px; color: #ccc;">
-    Giới hạn truy cập user 500/tháng<br>
-    Chúng tôi sẽ sớm nâng cấp hệ thống<br>
-    username thay thế cả pass nên không được để lộ tránh bị mất tiền
-  </p>
+<!-- Splash Screen -->
+<div id="splashScreen" style="position:fixed; inset:0; background:#ff0; display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:9999;">
+  <img src="hteammmo.png" style="max-width:90%; height:auto;" />
+  <div id="loadingText" style="font-size: 20px; margin-top: 20px;"></div>
 </div>
 
-<!-- MÀN 2 -->
+<script>
+let progress = 1;
+const loadingText = document.getElementById("loadingText");
+const splash = document.getElementById("splashScreen");
+
+const splashInterval = setInterval(() => {
+  loadingText.innerHTML = `Đang tải tiến trình dữ liệu<br><strong>${progress}%</strong>`;
+  progress++;
+
+  if (progress > 100) {
+    clearInterval(splashInterval);
+    splash.style.display = "none";
+    document.getElementById("loginScreen").classList.remove("hidden");
+  }
+}, 50); // 5 giây = 50ms * 100
+</script>
+</div>
+<audio id="bgMusic" src="hteammmo.mp3" loop></audio>
+
+<div id="loginScreen">
+  <h1 class="title">HTeam MMO</h1>
+  <input id="usernameInput" placeholder="Tên người dùng">
+  <input id="passwordInput" type="password" placeholder="Mật khẩu">
+  <button onclick="continueToMain()">ĐĂNG NHẬP</button>
+  <div style="text-align: left; margin: 20px 10%; color: #ccc;">
+    <b>Đăng kí MMO với HR</b><br>
+    » Telesale: Gọi xác nhận đơn cho khách<br>
+    » Saler: Lên đơn, tìm khách<br>
+    » CTV HTeam: Giới thiệu dịch vụ tìm kiếm khách dùng dịch vụ HTeam<br>
+    » Tool Auto: Treo máy kiếm xu...
+  </div>
+  <a href="https://m.me/viethung2002tienhai" target="_blank">
+    <button style="background:#0084ff; color:white;">ĐĂNG KÝ</button>
+  </a>
+</div>
+
+<div id="mainScreen" class="hidden">
+  <h1 class="title">HTeam MMO</h1>
+
+  <!-- Banner Slider -->
+  <div class="slider-container">
+    <div class="slider-track">
+      <img src="https://i.imgur.com/banner1.jpg" alt="Banner 1">
+      <img src="https://i.imgur.com/banner2.jpg" alt="Banner 2">
+      <img src="https://i.imgur.com/banner3.jpg" alt="Banner 3">
+    </div>
+  </div>
+
+  <div style="margin-top: 20px; font-size: 18px;">
+    Version: 1.2<br>Build: 1.1<br>Founder: Nguyễn Việt Hùng<br>©2021
+  </div>
+  <div style="margin-top: 30px;">
+    <button onclick="openGiftCode()" style="background: gold; font-weight: bold; font-size: 20px;">Gift Code 🎁</button>
+    <button onclick="openNotification()" style="background: gold; font-weight: bold; font-size: 20px;">Thông Báo 📢</button>
+    <button onclick="openEvent()" style="background: gold; font-weight: bold; font-size: 20px;">Sự Kiện 🏆</button>
+  </div>
+  <div class="footer">
+    <button onclick="alert('Chưa cập nhật')">🎮</button>
+    <button onclick="showIncome()">📊</button>
+    <button onclick="showWithdraw()">💸</button>
+    <button onclick="showSettings()">⚙️</button>
+    <button onclick="goHome()">H</button>
+  </div>
+</div>
+
 <div id="screen2" class="hidden">
   <h2>Thu nhập của bạn</h2>
-  <table>
-    <thead><tr><th>Ngày</th><th>Thu nhập</th><th>Ghi chú</th></tr></thead>
-    <tbody id="tableBody"></tbody>
-  </table>
-
-  <div style="text-align:left; margin-top:20px;">
+  <table><thead><tr><th>Ngày</th><th>Thu nhập</th><th>Ghi chú</th></tr></thead><tbody id="tableBody"></tbody></table>
+  <div style="text-align:left; padding: 0 20px;">
     <p><strong>Tổng thu nhập:</strong> <span id="total"></span></p>
     <p><strong>Số dư:</strong> <span id="balance"></span></p>
     <p><strong>Họ tên:</strong> <span id="realName"></span></p>
   </div>
-  <button class="blue-btn" onclick="showWithdraw()">Gửi yêu cầu rút tiền</button>
+  <button onclick="claimKPI()">Nhận thưởng KPI</button>
+  <button onclick="goHome()">↩️ Về trang chính</button>
 </div>
 
-<!-- MÀN 3 -->
 <div id="screen3" class="hidden">
   <h2>RÚT TIỀN</h2>
-  <input id="w_bank" placeholder="Ngân hàng"><br>
-  <input id="w_account" placeholder="Số tài khoản"><br>
-  <input id="w_amount" placeholder="Số tiền"><br>
-  <textarea id="w_note" placeholder="Nội dung rút"></textarea><br>
+  <input id="w_bank" placeholder="Ngân hàng">
+  <input id="w_account" placeholder="Số tài khoản">
+  <input id="w_amount" placeholder="Số tiền">
+  <textarea id="w_note" placeholder="Nội dung rút"></textarea>
+  <button onclick="submitWithdraw()">GỬI ĐI</button>
+  <button onclick="goHome()">↩️ Về trang chính</button>
+</div>
 
-  <button class="blue-btn" onclick="submitWithdraw()">GỬI ĐI</button>
-  <button class="blue-btn" style="margin-top: 10px;" onclick="backToStats()">↩️ BACK</button>
-
-  <div style="margin-top: 80px; padding: 0 5%; color: limegreen; font-size: 14px; text-align: left;">
-    <strong>Lưu ý:</strong><br>
-    1. Nên rút tài khoản chính chủ<br>
-    2. Rút tối thiểu 1000₫, tối đa 2 lần rút/ngày<br>
-    3. Tránh để lộ username vì nó thay thế mật khẩu<br>
-    4. Hệ thống sẽ tự duyệt và chuyển tiền trong khoảng 20h - 0h, vì vậy nên đặt lệnh trước 20h<br>
-    5. Nếu đã đặt lệnh trước 20h nhưng chưa nhận được tiền, vui lòng liên hệ trực tiếp với admin ở phần ĐĂNG KÝ màn đầu hoặc ID Facebook: <b>viethung2002tienhai</b>
-  </div>
-
-  <div style="margin-top: 40px;">
-    <h3>Lịch sử rút tiền</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>Thời gian</th>
-          <th>Ngân hàng</th>
-          <th>Số tiền</th>
-          <th>Nội dung</th>
-          <th>Trạng thái</th>
-        </tr>
-      </thead>
-      <tbody id="withdrawHistory"></tbody>
-    </table>
-  </div>
+<div id="screen4" class="hidden">
+  <h2>Cài đặt</h2>
+  <label><input type="checkbox" id="musicToggle" onchange="toggleMusic()"> Nhạc nền</label><br>
+  <label><input type="checkbox" id="wakeLockToggle" onchange="toggleWakeLock()"> Màn hình luôn sáng</label><br>
+  <label><input type="button" onclick="clearCache()" value="Xoá cache tạm"></label><br><br>
+  <button onclick="goHome()">↩️ Về trang chính</button>
 </div>
 
 <script>
-  const API = "https://sheetdb.io/api/v1/ttokf6668h433";
-  let usernameGlobal = "";
+const API = "https://sheetdb.io/api/v1/ttokf6668h433";
+let usernameGlobal = "", lastBalance = 0, wakeLock = null;
 
-  function continueToStats() {
-    const username = document.getElementById("usernameInput").value.trim();
-    if (!username) return alert("Vui lòng nhập tên người dùng");
+function continueToMain() {
+  const u = usernameInput.value.trim(), p = passwordInput.value.trim();
+  if (!u || !p) return alert("Vui lòng nhập đủ thông tin");
+  fetch(API + "?sheet=ThuNhap").then(r => r.json()).then(data => {
+    const user = data.find(r => r.username === u && r.pass === p);
+    if (!user) return alert("Sai thông tin đăng nhập");
+    usernameGlobal = u;
+    loginScreen.classList.add("hidden");
+    mainScreen.classList.remove("hidden");
+    bgMusic.play();
+  });
+}
 
-    fetch(API + "?sheet=ThuNhap")
-      .then(res => res.json())
-      .then(data => {
-        const filtered = data.filter(row => row.username === username);
+function showIncome() {
+  mainScreen.classList.add("hidden");
+  screen3.classList.add("hidden");
+  screen4.classList.add("hidden");
+  screen2.classList.remove("hidden");
+  fetch(API + "?sheet=ThuNhap").then(r => r.json()).then(data => {
+    const rows = data.filter(r => r.username === usernameGlobal);
+    let totalAmount = 0;
+    tableBody.innerHTML = "";
+    rows.forEach(r => {
+      totalAmount += parseFloat(r.amount || 0);
+      tableBody.innerHTML += `<tr><td>${r.date}</td><td>${r.amount}</td><td>${r.note}</td></tr>`;
+    });
+    realName.textContent = rows.at(-1)?.name || "";
+    lastBalance = parseFloat(rows.at(-1)?.balance || 0);
+    balance.textContent = lastBalance.toLocaleString() + " đ";
+    total.textContent = totalAmount.toLocaleString() + " đ";
+  });
+}
 
-        if (filtered.length === 0) {
-          alert("Tên người dùng không chính xác hoặc bạn chưa đăng ký HTeam MMO, vui lòng thử lại");
-          return;
-        }
+function claimKPI() {
+  fetch(API + "?sheet=ThuNhap").then(r => r.json()).then(data => {
+    const rows = data.filter(r => r.username === usernameGlobal);
+    const unclaimed = rows.filter(r => !r.status || r.status.toLowerCase() !== "done" && !r.note?.toLowerCase().includes("kpi"));
+    if (!unclaimed.length) return alert("Bạn đã nhận hết KPI.");
+    const total = unclaimed.reduce((s, r) => s + parseFloat(r.amount || 0), 0);
+    const bonus = Math.round(total * 0.2), today = new Date().toLocaleDateString("vi-VN");
+    const row = [{
+      id: Date.now().toString(), username: usernameGlobal, pass: "",
+      amount: bonus, date: today, note: "thưởng kpi",
+      balance: lastBalance + bonus,
+      name: rows.find(r => r.name)?.name || "", status: "done"
+    }];
+    fetch(API + "?sheet=ThuNhap", {
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(row)
+    }).then(() => {
+      unclaimed.forEach(r => r.id && fetch(API + `/id/${r.id}?sheet=ThuNhap`, {
+        method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ status: "done" })
+      }));
+      alert(`Đã nhận ${bonus.toLocaleString()}₫ KPI`);
+      showIncome();
+    });
+  });
+}
 
-        usernameGlobal = username;
-        document.getElementById("screen1").classList.add("hidden");
-        document.getElementById("screen2").classList.remove("hidden");
+function submitWithdraw() {
+  const bank = w_bank.value.trim();
+  const account = w_account.value.trim();
+  const amount = w_amount.value.trim();
+  const note = w_note.value.trim();
 
-        const tableBody = document.getElementById("tableBody");
-        let total = 0;
-        let lastBalance = 0;
-        let realName = "";
-
-        tableBody.innerHTML = "";
-        filtered.forEach((row) => {
-          const tr = document.createElement("tr");
-          tr.innerHTML = `<td>${row.date || ""}</td><td>${row.amount || 0}</td><td>${row.note || ""}</td>`;
-          tableBody.appendChild(tr);
-
-          total += parseFloat(row.amount || 0);
-
-          if (row.balance && !isNaN(parseFloat(row.balance))) {
-            lastBalance = parseFloat(row.balance);
-          }
-
-          if (row.name) {
-            realName = row.name;
-          }
-        });
-
-        document.getElementById("total").textContent = total.toLocaleString() + " đ";
-        document.getElementById("balance").textContent = lastBalance.toLocaleString() + " đ";
-        document.getElementById("realName").textContent = realName;
-      })
-      .catch(err => alert("Lỗi khi lấy dữ liệu: " + err));
+  if (!bank || !account || !amount || isNaN(amount)) {
+    return alert("Vui lòng nhập đầy đủ và chính xác thông tin rút tiền.");
   }
 
-  function showWithdraw() {
-    document.getElementById("screen2").classList.add("hidden");
-    document.getElementById("screen3").classList.remove("hidden");
+  const data = [{
+    time: new Date().toLocaleString("vi-VN"),
+    username: usernameGlobal,
+    bank: bank,
+    account: account,
+    amount: amount,
+    note: note
+  }];
 
-    // Lịch sử rút tiền
-    fetch(API + "?sheet=YeuCauRut")
-      .then(res => res.json())
-      .then(data => {
-        const filtered = data.filter(row => row.username === usernameGlobal);
-        const table = document.getElementById("withdrawHistory");
-        table.innerHTML = "";
+  fetch(API + "?sheet=YeuCauRut", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  }).then(() => {
+    alert("Đã gửi yêu cầu rút tiền! Vui lòng chờ duyệt.");
+    goHome();
+  }).catch(e => alert("Lỗi gửi yêu cầu: " + e));
+}
 
-        filtered.reverse().forEach(row => {
-          const tr = document.createElement("tr");
-          tr.innerHTML = `
-            <td>${row.time || ""}</td>
-            <td>${row.bank || ""}</td>
-            <td>${row.amount || ""}</td>
-            <td>${row.Content || ""}</td>
-            <td>${row.status || "Đang xử lý"}</td>`;
-          table.appendChild(tr);
-        });
-      });
-  }
-
-  function submitWithdraw() {
-    const data = {
-      time: new Date().toLocaleString(),
-      username: usernameGlobal,
-      bank: document.getElementById("w_bank").value,
-      ["account number"]: document.getElementById("w_account").value,
-      amount: document.getElementById("w_amount").value,
-      Content: document.getElementById("w_note").value
-    };
-
-    fetch(API + "?sheet=YeuCauRut", {
-      method: "POST",
+function openGiftCode() {
+  const code = prompt("Nhập gift code:");
+  if (!code) return;
+  fetch(API + "?sheet=Home").then(r => r.json()).then(data => {
+    const row = data.find(r => r.giftcode?.trim().toLowerCase() === code.trim().toLowerCase() && (!r.status || r.status !== "done"));
+    if (!row) return alert("Code không hợp lệ hoặc đã sử dụng.");
+    const rewardList = [
+      { value: 10000, chance: 50 },
+      { value: 20000, chance: 55 },
+      { value: 50000, chance: 70 },
+      { value: 100000, chance: 7 },
+    ];
+    const rand = Math.random() * 100;
+    let cumulative = 0, reward = 10000;
+    for (const r of rewardList) {
+      cumulative += r.chance;
+      if (rand <= cumulative) {
+        reward = r.value;
+        break;
+      }
+    }
+    fetch(API + `/giftcode/${code}?sheet=Home`, {
+      method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify([data])
-    })
-    .then(res => res.json())
-    .then(() => {
-      alert("Đã gửi yêu cầu rút tiền!");
-      location.reload();
-    })
-    .catch(err => alert("Gửi thất bại: " + err));
-  }
+      body: JSON.stringify({ status: "done" }),
+    });
+    alert(`Bạn nhận được ${reward.toLocaleString()}₫! Chụp màn hình gửi admin.`);
+  });
+}
 
-  function backToStats() {
-    document.getElementById("screen3").classList.add("hidden");
-    document.getElementById("screen2").classList.remove("hidden");
+function openNotification() {
+  fetch(API + "?sheet=Home").then(r => r.json()).then(data => {
+    const rows = data.filter(r => r.noti);
+    if (!rows.length) return alert("Không có thông báo nào.");
+    alert("Thông báo:\n" + rows.map(r => `• ${r.noti}`).join("\n"));
+  });
+}
+
+function openEvent() {
+  alert("Hiện tại chưa có sự kiện nào.");
+}
+
+function showWithdraw() {
+  mainScreen.classList.add("hidden");
+  screen2.classList.add("hidden");
+  screen4.classList.add("hidden");
+  screen3.classList.remove("hidden");
+}
+
+function showSettings() {
+  mainScreen.classList.add("hidden");
+  screen2.classList.add("hidden");
+  screen3.classList.add("hidden");
+  screen4.classList.remove("hidden");
+}
+
+function goHome() {
+  screen2.classList.add("hidden");
+  screen3.classList.add("hidden");
+  screen4.classList.add("hidden");
+  mainScreen.classList.remove("hidden");
+}
+
+function toggleMusic() {
+  bgMusic[musicToggle.checked ? "play" : "pause"]();
+}
+
+function toggleWakeLock() {
+  if ('wakeLock' in navigator && wakeLockToggle.checked) {
+    navigator.wakeLock.request('screen').then(lock => wakeLock = lock);
+  } else if (wakeLock) {
+    wakeLock.release(); wakeLock = null;
   }
+}
+
+function clearCache() {
+  localStorage.clear();
+  alert("Đã xoá cache");
+}
 </script>
+<script>
+let progress = 1;
+const loadingText = document.getElementById("loadingText");
+const percentText = document.getElementById("loadingPercent");
+const splash = document.getElementById("splashScreen");
 
+const splashInterval = setInterval(() => {
+  loadingText.innerHTML = `Đang tải tiến trình dữ liệu<br><strong id="loadingPercent">${progress}%</strong>`;
+  progress++;
+
+  if (progress > 100) {
+    clearInterval(splashInterval);
+    splash.style.display = "none";
+    document.getElementById("loginScreen").classList.remove("hidden");
+  }
+}, 50); // 50ms * 100 = 5 giây
+</script>
 </body>
 </html>
